@@ -11,17 +11,15 @@ class NameMapper;
 class NameFinder
 {
 public:
-  NameFinder();
-
   void addName(const std::string& name,
-               const std::string& wm_class_regex,
+               const std::string& wm_class,
                const std::string& wm_name_regex);
 
   std::string getName(const std::string& wm_class, const std::string& wm_name) const;
 
 private:
-  std::map<std::string, NameMapper> wm_classes;
-  std::vector<std::string> names;
+  std::map<std::string, NameMapper> m_wm_classes;
+  std::vector<std::string> m_names;
 };
 
 class NameMapper
@@ -34,14 +32,16 @@ public:
   long getName(const std::string& wm_name) const;
 
 private:
-  typedef struct
+  struct NameMap
   {
+    ~NameMap();
+
     regex_t regex;
     unsigned name_index;
-  } NameMap;
+  };
 
-  std::vector<NameMap> wm_names;
-  long default_name_index;
+  std::vector<NameMap> m_wm_names;
+  long m_default_name_index;
 };
 
 #endif //NAME_FINDER_H
