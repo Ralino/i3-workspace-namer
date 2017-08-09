@@ -1,0 +1,19 @@
+{
+  "names":
+    [
+    {
+      "name":"iBOSS - Vim",
+      "class":"(URxvt)|(urxvt)",
+      "window_name":".*\(.*iboss_ws/src/iboss/.*\) - VIM$"
+    },
+    {
+      "name":"Vimpager",
+      "class":"(URxvt)|(urxvt)",
+      "window_name":"^stdin .* - VIM$"
+    },
+    {
+      "name":"CLASS",
+      "class":"DEFAULT"
+    }
+    ]
+}
