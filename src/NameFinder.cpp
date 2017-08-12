@@ -8,7 +8,7 @@ void NameFinder::addName(const std::string& name,
 {
   m_names.push_back(name);
   unsigned index = m_names.size() - 1;
-  auto class_it = m_wm_classes.emplace(wm_class).first;
+  auto class_it = m_wm_classes.emplace(wm_class, NameMapper{}).first;
   class_it->second.addWMName(wm_name_regex, index);
 }
 
@@ -73,9 +73,4 @@ long NameMapper::getName(const std::string& wm_name) const
   }
   //No match found
   return m_default_name_index;
-}
-
-NameMapper::NameMap::~NameMap()
-{
-  regfree(&regex); //FIXME needed?
 }

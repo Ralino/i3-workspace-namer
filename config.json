@@ -4,7 +4,7 @@
     {
       "name":"iBOSS - Vim",
       "class":"(URxvt)|(urxvt)",
-      "window_name":".*\(.*iboss_ws/src/iboss/.*\) - VIM$"
+      "window_name":".*\\(.*iboss_ws/src/iboss/.*\\) - VIM$"
     },
     {
       "name":"Vimpager",

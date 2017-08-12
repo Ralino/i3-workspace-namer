@@ -10,10 +10,12 @@ pkg_check_modules(JSONCPP REQUIRED jsoncpp)
 set(Sources
     src/main.cpp
     src/ConfigParser.cpp
+    src/NameFinder.cpp
    )
 
 set(Headers
     src/ConfigParser.h
+    src/NameFinder.h
    )
 
 add_executable(i3-workspace-namer ${Sources} ${Headers})

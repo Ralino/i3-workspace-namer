@@ -19,7 +19,7 @@ int main(int argc, char** argv)
     std::cout << "Failed to open config file " << argv[1] << std::endl;
     return 2;
   }
-  config_parser::readConfig(&config_file);
+  NameFinder nf = config_parser::readConfig(&config_file);
 
   i3ipc::connection conn;
   //Listen to i3ipc

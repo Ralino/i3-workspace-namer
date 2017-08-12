@@ -34,9 +34,7 @@ public:
 private:
   struct NameMap
   {
-    ~NameMap();
-
-    regex_t regex;
+    regex_t regex; //FIXME regfree(..)?
     unsigned name_index;
   };
 
