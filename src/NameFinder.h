@@ -13,9 +13,9 @@ class NameFinder
 public:
   void addName(const std::string& name,
                const std::string& wm_class,
-               const std::string& wm_name_regex);
+               const std::string& title_regex);
 
-  std::string getName(const std::string& wm_class, const std::string& wm_name) const;
+  std::string getName(const std::string& wm_class, const std::string& title) const;
 
 private:
   std::map<std::string, NameMapper> m_wm_classes;
@@ -27,9 +27,9 @@ class NameMapper
 public:
   NameMapper();
 
-  void addWMName(const std::string& wm_name_regex, unsigned name_index);
+  void addTitle(const std::string& title_regex, unsigned name_index);
 
-  long getName(const std::string& wm_name) const;
+  long getName(const std::string& title) const;
 
 private:
   struct NameMap
@@ -38,7 +38,7 @@ private:
     unsigned name_index;
   };
 
-  std::vector<NameMap> m_wm_names;
+  std::vector<NameMap> m_titles;
   long m_default_name_index;
 };
 
