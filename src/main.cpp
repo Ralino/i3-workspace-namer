@@ -1,9 +1,9 @@
 #include <iostream>
 #include <fstream>
-#include <i3ipc++/ipc.hpp>
-#include <json/value.h>
 
 #include "ConfigParser.h"
+#include "NameFinder.h"
+#include "SignalHandler.h"
 
 int main(int argc, char** argv)
 {
@@ -19,10 +19,9 @@ int main(int argc, char** argv)
     std::cout << "Failed to open config file " << argv[1] << std::endl;
     return 2;
   }
-  NameFinder nf = config_parser::readConfig(&config_file);
+  SignalHandler sh(config_parser::readConfig(&config_file));
 
-  i3ipc::connection conn;
-  //Listen to i3ipc
+  sh.spin();
 
   return 0;
 }

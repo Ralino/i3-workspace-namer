@@ -11,11 +11,13 @@ set(Sources
     src/main.cpp
     src/ConfigParser.cpp
     src/NameFinder.cpp
+    src/SignalHandler.cpp
    )
 
 set(Headers
     src/ConfigParser.h
     src/NameFinder.h
+    src/SignalHandler.h
    )
 
 add_executable(i3-workspace-namer ${Sources} ${Headers})
