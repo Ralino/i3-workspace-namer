@@ -1,9 +1,13 @@
 #include <iostream>
 #include <fstream>
+#include <memory>
+
+#include <i3ipc++/ipc.hpp>
 
 #include "ConfigParser.h"
 #include "NameFinder.h"
 #include "SignalHandler.h"
+#include "WorkspaceManager.h"
 
 int main(int argc, char** argv)
 {
@@ -19,9 +23,16 @@ int main(int argc, char** argv)
     std::cout << "Failed to open config file " << argv[1] << std::endl;
     return 2;
   }
-  SignalHandler sh(config_parser::readConfig(&config_file));
+  std::shared_ptr<i3ipc::connection> conn = std::make_shared<i3ipc::connection>();
 
-  sh.spin();
+  std::shared_ptr<WorkspaceManager> ws_manager = std::make_shared<WorkspaceManager>(
+      config_parser::readConfig(&config_file), conn);
+  SignalHandler sh(conn, ws_manager);
+
+  while (true)
+  {
+    conn->handle_event();
+  }
 
   return 0;
 }

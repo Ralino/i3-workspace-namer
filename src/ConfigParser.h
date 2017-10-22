@@ -1,5 +1,4 @@
-#ifndef CONFIGPARSER_H
-#define CONFIGPARSER_H
+#pragma once
 
 #include "NameFinder.h"
 
@@ -11,5 +10,3 @@ namespace config_parser {
 NameFinder readConfig(std::istream* config);
 
 }
-
-#endif //CONFIGPARSER_H

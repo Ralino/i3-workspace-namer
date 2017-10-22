@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(i3-workspace-namer)
 
+set(CMAKE_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++14 -Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g3 -DDEBUG")
 
@@ -12,12 +13,14 @@ set(Sources
     src/ConfigParser.cpp
     src/NameFinder.cpp
     src/SignalHandler.cpp
+    src/WorkspaceManager.cpp
    )
 
 set(Headers
     src/ConfigParser.h
     src/NameFinder.h
     src/SignalHandler.h
+    src/WorkspaceManager.h
    )
 
 add_executable(i3-workspace-namer ${Sources} ${Headers})

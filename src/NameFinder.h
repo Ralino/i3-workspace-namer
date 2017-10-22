@@ -1,5 +1,4 @@
-#ifndef NAME_FINDER_H
-#define NAME_FINDER_H
+#pragma once
 
 #include <vector>
 #include <map>
@@ -42,5 +41,3 @@ private:
   std::vector<NameMap> m_titles;
   NameFinder::NameIndex m_default_name_index;
 };
-
-#endif //NAME_FINDER_H
