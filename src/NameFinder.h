@@ -11,6 +11,7 @@ class NameMapper;
 class NameFinder
 {
 public:
+  typedef long NameIndex;
   void addName(const std::string& name,
                const std::string& wm_class,
                const std::string& title_regex);
@@ -27,19 +28,19 @@ class NameMapper
 public:
   NameMapper();
 
-  void addTitle(const std::string& title_regex, unsigned name_index);
+  void addTitle(const std::string& title_regex, NameFinder::NameIndex name_index);
 
-  long getName(const std::string& title) const;
+  NameFinder::NameIndex getName(const std::string& title) const;
 
 private:
   struct NameMap
   {
     regex_t regex; //FIXME regfree(..)?
-    unsigned name_index;
+    NameFinder::NameIndex name_index;
   };
 
   std::vector<NameMap> m_titles;
-  long m_default_name_index;
+  NameFinder::NameIndex m_default_name_index;
 };
 
 #endif //NAME_FINDER_H

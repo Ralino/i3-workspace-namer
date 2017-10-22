@@ -38,7 +38,7 @@ NameMapper::NameMapper()
 {
 }
 
-void NameMapper::addTitle(const std::string& title_regex, unsigned name_index)
+void NameMapper::addTitle(const std::string& title_regex, NameFinder::NameIndex name_index)
 {
   if (title_regex.empty())
   {
@@ -61,7 +61,7 @@ void NameMapper::addTitle(const std::string& title_regex, unsigned name_index)
   }
 }
 
-long NameMapper::getName(const std::string& wm_name) const
+NameFinder::NameIndex NameMapper::getName(const std::string& wm_name) const
 {
   for (NameMap nm : m_titles)
   {
