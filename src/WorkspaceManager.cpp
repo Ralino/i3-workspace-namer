@@ -21,6 +21,7 @@ void WorkspaceManager::updateAllWorkspaces()
   }
   auto root = m_i3_conn->get_tree();
   unsigned ws_number = 10;
+  bool set_name = true;
   std::function<void(std::shared_ptr<i3ipc::container_t>)> depth_first = [&] (std::shared_ptr<i3ipc::container_t> root) -> void
   {
     std::cout << root->name << ", " << root->ws_num << ", " << (root->xwindow_id? root->window_properties.wm_class : "")  << std::endl;
@@ -31,12 +32,18 @@ void WorkspaceManager::updateAllWorkspaces()
         std::cerr << "Unexpected ws number" << std::endl;
         return;
       }
+      if (!set_name) //Check if last workspace's name was set
+      {
+        setWorkspaceName("", ws_number);
+      }
+      set_name = false;
       ws_number = root->ws_num - 1;
       m_workspaces[ws_number].current_name = root->name;
     }
     if (root->xwindow_id && ws_number < 10)
     {
       addWindow(root->xwindow_id, root->window_properties.wm_class, root->window_properties.title, ws_number);
+      set_name = true;
     }
     for (auto child : root->nodes)
     {
