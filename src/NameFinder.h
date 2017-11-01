@@ -15,7 +15,9 @@ public:
                const std::string& wm_class,
                const std::string& title_regex);
 
-  std::string getName(const std::string& wm_class, const std::string& title) const;
+  NameIndex getNameIndex(const std::string& wm_class, const std::string& title) const;
+  std::string getName(const NameIndex& index) const;
+
 
 private:
   std::map<std::string, NameMapper> m_wm_classes;

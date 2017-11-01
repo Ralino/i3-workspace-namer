@@ -15,8 +15,6 @@ private:
   void handleWorkspaceEvent(const i3ipc::workspace_event_t& event);
   void handleWindowEvent(const i3ipc::window_event_t& event);
 
-  SignalHandler();
   std::shared_ptr<i3ipc::connection> m_i3_conn;
   std::shared_ptr<WorkspaceManager> m_ws_manager;
-
 };

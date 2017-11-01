@@ -12,7 +12,7 @@ void NameFinder::addName(const std::string& name,
   class_it->second.addTitle(title_regex, index);
 }
 
-std::string NameFinder::getName(const std::string& wm_class, const std::string& title) const
+NameFinder::NameIndex NameFinder::getNameIndex(const std::string& wm_class, const std::string& title) const
 {
   auto class_it = m_wm_classes.find(wm_class);
   if (class_it == m_wm_classes.end())
@@ -20,14 +20,18 @@ std::string NameFinder::getName(const std::string& wm_class, const std::string& 
     class_it = m_wm_classes.find("DEFAULT"); //FIXME
     if (class_it == m_wm_classes.end())
     {
-      return "";
+      return -1;
     }
   }
 
-  long index = class_it->second.getName(title);
-  if (index < 0 || (unsigned) index >= m_names.size()) //FIXME
+  return class_it->second.getName(title);
+}
+
+std::string NameFinder::getName(const NameFinder::NameIndex& index) const
+{
+  if (index < 0 || (unsigned long) index >= m_names.size())
   {
-    return wm_class;
+    return ""; //FIXME
   }
 
   return m_names[index];

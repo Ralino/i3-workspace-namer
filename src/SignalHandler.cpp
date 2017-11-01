@@ -19,7 +19,8 @@ SignalHandler::SignalHandler(std::shared_ptr<i3ipc::connection> i3_conn,
 
 void SignalHandler::handleWorkspaceEvent(const i3ipc::workspace_event_t& event)
 {
-  //TODO
+  std::cout << "Got workspace event: " << event.old->num << " to " << event.current->num
+            << std::endl;
 }
 
 void SignalHandler::handleWindowEvent(const i3ipc::window_event_t& event)
