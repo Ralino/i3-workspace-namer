@@ -49,7 +49,10 @@ void WorkspaceManager::updateAllWorkspaces()
     {
       depth_first(child);
     }
-    //TODO floating children?
+    for (auto floating_child : root->floating_nodes)
+    {
+      depth_first(floating_child);
+    }
   };
   depth_first(root);
 }
