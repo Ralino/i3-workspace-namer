@@ -2,7 +2,7 @@
 
 #include <memory>
 
-//#include <i3ipc++/ipc.hpp>
+#include <i3ipc++/ipc.hpp>
 
 #include "WorkspaceManager.h"
 

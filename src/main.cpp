@@ -29,10 +29,11 @@ int main(int argc, char** argv)
       config_parser::readConfig(&config_file), conn);
   SignalHandler sh(conn, ws_manager);
 
-  while (true)
+  do
   {
     conn->handle_event();
   }
+  while (conn->is_connected());
 
   return 0;
 }
