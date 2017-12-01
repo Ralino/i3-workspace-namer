@@ -1,19 +1,51 @@
 {
   "names":
     [
-    {
-      "name":"iBOSS - Vim",
-      "class":"(URxvt)|(urxvt)",
-      "window_name":".*\\(.*iboss_ws/src/iboss/.*\\) - VIM$"
-    },
-    {
-      "name":"Vimpager",
-      "class":"(URxvt)|(urxvt)",
-      "window_name":"^stdin .* - VIM$"
-    },
-    {
-      "name":"CLASS",
-      "class":"DEFAULT"
-    }
+      {
+        "name":"CLASS",
+        "class":"DEFAULT"
+      },
+      {
+        "name":"Browser",
+        "class":"Nightly"
+      },
+      {
+        "name":"iBOSS Vim",
+        "class":"Termite",
+        "window_name":".*\\(.*iboss_ws/src/iboss/.*\\) - VIM$"
+      },
+      {
+        "name":"Vim",
+        "class":"Termite",
+        "window_name":".* - VIM$"
+      },
+      {
+        "name":"Nextcloud ssh",
+        "class":"Termite",
+        "window_name":"^[[:alnum:]]+@nextcloud.*"
+      },
+      {
+        "name":"ROS2 Terminal",
+        "class":"Termite",
+        "window_name":".* - ROS2$"
+      },
+      {
+        "name":"Kamaro Terminal",
+        "class":"Termite",
+        "window_name":".* - Kamaro$"
+      },
+      {
+        "name":"Root Terminal",
+        "class":"Termite",
+        "window_name":"^root@foxlair.*"
+      },
+      {
+        "name":"Terminal",
+        "class":"Termite"
+      },
+      {
+        "name":"",
+        "class":"Polybar"
+      }
     ]
 }
