@@ -17,8 +17,8 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  std::ifstream config_file(argv[1]);
-  if (!(config_file.is_open() && config_file.good()))
+  std::ifstream* config_file = new std::ifstream(argv[1]);
+  if (!(config_file->is_open() && config_file->good()))
   {
     std::cout << "Failed to open config file " << argv[1] << std::endl;
     return 2;
@@ -26,8 +26,9 @@ int main(int argc, char** argv)
   std::shared_ptr<i3ipc::connection> conn = std::make_shared<i3ipc::connection>();
 
   std::shared_ptr<WorkspaceManager> ws_manager = std::make_shared<WorkspaceManager>(
-      config_parser::readConfig(&config_file), conn);
+      config_parser::readConfig(config_file), conn);
   SignalHandler sh(conn, ws_manager);
+  delete config_file;
 
   do
   {
