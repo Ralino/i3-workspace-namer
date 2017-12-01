@@ -62,11 +62,24 @@ void WorkspaceManager::updateWorkspaceName(std::string new_name, unsigned ws_num
   std::stringstream ss;
   ss << ws_number << ": " << new_name;
 
-  //if (std::string(ss.str()) != m_workspaces[ws_number].current_name)
-  //{
-  //TODO set actual name with i3_conn
-  std::cout << "Set a new name: \"" << ss.str() << "\"" << std::endl;
-  //}
+  std::shared_ptr<Workspace> workspace;
+  try
+  {
+    workspace = m_workspaces.at(ws_number);
+  }
+  catch (std::out_of_range e)
+  {
+    std::cerr << "Tried to update name of non existing workspace nr \"" << ws_number << "\"" << std::endl;
+    return;
+  }
+    
+  if (std::string(ss.str()) != workspace->current_name)
+  {
+    std::stringstream cmd_ss;
+    cmd_ss << "rename workspace \"" << workspace->current_name << "\" to \"" << ss.str() << "\"";
+    m_i3_conn->send_command(cmd_ss.str());
+    std::cout << "Set a new name: \"" << ss.str() << "\"" << std::endl;
+  }
 }
 
 void WorkspaceManager::initWorkspace(unsigned ws_num, std::string name)
