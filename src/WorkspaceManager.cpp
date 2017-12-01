@@ -21,7 +21,6 @@ void WorkspaceManager::updateAllWorkspaces()
   bool set_name = true;
   std::function<void(std::shared_ptr<i3ipc::container_t>)> depth_first = [&] (std::shared_ptr<i3ipc::container_t> root) -> void
   {
-    std::cout << root->name << ", " << root->ws_num << ", " << (root->xwindow_id? root->window_properties.wm_class : "")  << std::endl;
     if (root->type == "workspace" && root->name != "__i3_scratch")
     {
       auto new_workspace = std::make_shared<Workspace>();
@@ -29,11 +28,6 @@ void WorkspaceManager::updateAllWorkspaces()
       new_workspace->current_name = root->name;
       m_workspaces.emplace(new_workspace->ws_number, new_workspace);
 
-      if (!set_name) //Check if last workspace's name was set
-      {
-        updateWorkspaceName("", last_ws_number);
-      }
-      set_name = false;
       last_ws_number = new_workspace->ws_number;
     }
     if (root->xwindow_id && last_ws_number != 0)
@@ -72,7 +66,7 @@ void WorkspaceManager::updateWorkspaceName(std::string new_name, unsigned ws_num
     std::cerr << "Tried to update name of non existing workspace nr \"" << ws_number << "\"" << std::endl;
     return;
   }
-    
+
   if (std::string(ss.str()) != workspace->current_name)
   {
     std::stringstream cmd_ss;
@@ -113,8 +107,7 @@ void WorkspaceManager::removeWorkspace(unsigned ws_num)
   if (!workspace->window_indices.empty())
   {
     std::cerr << "Removing workspace which still contains windows" << std::endl;
-    //Continuing anyway
-
+    //Continuing anyway, but clean up
     for (auto pair : workspace->window_indices)
     {
       this->removeWindow(pair.second->id);
@@ -162,8 +155,8 @@ void WorkspaceManager::addWindow(
   new_window->name_index = m_name_finder.getNameIndex(wm_class, title);
 
   m_window_ids.emplace(new_window->id, new_window);
-
   auto it = m_workspaces.at(ws_number)->window_indices.emplace(new_window->name_index, new_window);
+
   if (it == m_workspaces.at(ws_number)->window_indices.cbegin())
   {
     std::string new_ws_name = m_name_finder.getName(new_window->name_index);
@@ -208,38 +201,43 @@ void WorkspaceManager::moveWindow(uint64_t id)
 
 void WorkspaceManager::changeWindowTitle(uint64_t id, std::string new_title)
 {
-  auto pair = m_window_ids.find(id);
-  if (pair == m_window_ids.cend())
+  std::shared_ptr<Window> win;
+  try
+  {
+    win = m_window_ids.at(id);
+  }
+  catch (std::out_of_range e)
   {
     std::cerr << "Tried to change window title of non existing window" << std::endl;
     return;
   }
-  auto win = pair->second;
-  win->title = new_title;
-  auto new_index = m_name_finder.getNameIndex(win->wm_class, win->title);
-  if (new_index != (win)->name_index)
+
+  std::shared_ptr<Workspace> workspace;
+  try
   {
-    (win)->name_index = new_index;
-    std::shared_ptr<Workspace> workspace;
-    try
+    workspace = m_workspaces.at(win->ws_number);
+  }
+  catch (std::out_of_range e)
+  {
+    std::cerr << "Tried changing window title on non existing workspace" << std::endl;
+    //If this happens, we have bigger problems, escalate
+    throw e;
+  }
+
+  workspace->window_indices.erase(win->name_index);
+
+  win->title = new_title;
+  win->name_index = m_name_finder.getNameIndex(win->wm_class, win->title);
+
+  auto it = workspace->window_indices.emplace(win->name_index, win);
+  if (it == workspace->window_indices.cbegin())
+  {
+    std::string new_ws_name = m_name_finder.getName((win)->name_index);
+    if (new_ws_name == "CLASS")
     {
-      workspace = m_workspaces.at(win->ws_number);
+      new_ws_name = (win)->wm_class;
     }
-    catch (std::out_of_range e)
-    {
-      std::cerr << "Changing window title on non existing workspace" << std::endl;
-      return;
-    }
-    auto it = workspace->window_indices.emplace(win->name_index, win);
-    if (it == workspace->window_indices.cbegin())
-    {
-      std::string new_ws_name = m_name_finder.getName((win)->name_index);
-      if (new_ws_name == "CLASS")
-      {
-        new_ws_name = (win)->wm_class;
-      }
-      updateWorkspaceName(new_ws_name, (win)->ws_number);
-    }
+    updateWorkspaceName(new_ws_name, (win)->ws_number);
   }
 }
 
@@ -263,7 +261,8 @@ unsigned WorkspaceManager::removeWindow(uint64_t id)
   catch (std::out_of_range e)
   {
     std::cerr << "Removing window from non existing workspace" << std::endl;
-    return 0;
+    //If this happens, we have bigger problems, escalate
+    throw e;
   }
   auto it = workspace->window_indices.find(win->name_index);
   if (it == workspace->window_indices.cbegin())
