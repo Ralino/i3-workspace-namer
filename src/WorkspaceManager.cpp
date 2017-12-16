@@ -199,6 +199,7 @@ void WorkspaceManager::moveWindow(uint64_t id)
   }
 }
 
+
 void WorkspaceManager::changeWindowTitle(uint64_t id, std::string new_title)
 {
   std::shared_ptr<Window> win;
@@ -330,4 +331,48 @@ unsigned WorkspaceManager::findWindow(uint64_t win_id)
   };
 
   return depth_first(m_i3_conn->get_tree());
+}
+
+WorkspaceManager::Workspace WorkspaceManager::getWorkspace(unsigned ws_num) const
+{
+  std::shared_ptr<Workspace> original = m_workspaces.at(ws_num);
+
+  Workspace ws_copy = *original;
+
+  //Copy windows
+  for (auto win_original : ws_copy.window_indices)
+  {
+    std::shared_ptr<Window> win_copy = std::make_shared<Window>(*(win_original.second));
+    win_original.second = win_copy;
+  }
+  return ws_copy;
+}
+
+std::vector<WorkspaceManager::Workspace> WorkspaceManager::getAllWorkspaces() const
+{
+  std::vector<WorkspaceManager::Workspace> ret;
+  if (m_workspaces.empty())
+  {
+    return ret;
+  }
+
+  unsigned max_ws_num = (m_workspaces.crend()++)->first;
+  ret.reserve(max_ws_num + 1);
+
+  auto ws_it = m_workspaces.cbegin();
+  for (unsigned index = 0; index <= max_ws_num; index++)
+  {
+    if (ws_it != m_workspaces.cend() && ws_it->first == index)
+    {
+      ret.push_back(getWorkspace(index));
+      ws_it++;
+    }
+    else
+    {
+      Workspace ws;
+      ws.ws_number = index;
+      ret.push_back(std::move(ws));
+    }
+  }
+  return ret;
 }

@@ -14,6 +14,21 @@ class WorkspaceManager
 public:
   WorkspaceManager(NameFinder name_finder, std::shared_ptr<i3ipc::connection> i3_conn);
 
+  struct Window
+  {
+    uint64_t id;
+    unsigned ws_number;
+    std::string wm_class;
+    std::string title;
+
+    NameFinder::NameIndex name_index;
+  };
+  struct Workspace
+  {
+    unsigned ws_number;
+    std::string current_name;
+    std::multimap<NameFinder::NameIndex, std::shared_ptr<Window>> window_indices;
+  };
   /**
    * Reset the cached window tree and rebuild it from i3ipc.get_tree
    * Resets all workspace names
@@ -57,22 +72,21 @@ public:
    **/
   void moveWindow(uint64_t id);
 
-private:
-  struct Window
-  {
-    uint64_t id;
-    unsigned ws_number;
-    std::string wm_class;
-    std::string title;
+  /**
+   * Gets a deep copy of the workspace with number ws_num.
+   * @throws std::out_of_range if there is no workspace with that number
+   **/
+  Workspace getWorkspace(unsigned ws_num) const;
 
-    NameFinder::NameIndex name_index;
-  };
-  struct Workspace
-  {
-    unsigned ws_number;
-    std::string current_name;
-    std::multimap<NameFinder::NameIndex, std::shared_ptr<Window>> window_indices;
-  };
+  /**
+   * Gets a vector with deep copies of all workspaces.
+   * The workspaces are indexed by their ws_number, so workspace 1 is at getAllWorkspaces()[1].
+   * The resulting empty slots are filled up with default initialized workspaces with their
+   * ws_number set to their according index.
+   **/
+  std::vector<Workspace> getAllWorkspaces() const;
+
+  private:
 
   NameFinder m_name_finder;
   std::shared_ptr<i3ipc::connection> m_i3_conn;
