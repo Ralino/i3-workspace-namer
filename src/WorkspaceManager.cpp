@@ -225,12 +225,25 @@ void WorkspaceManager::changeWindowTitle(uint64_t id, std::string new_title)
     throw e;
   }
 
-  workspace->window_indices.erase(win->name_index);
+  auto it = workspace->window_indices.lower_bound(win->name_index);
+  while (it == workspace->window_indices.end() || it->second->id != win->id)
+  {
+    if (it == workspace->window_indices.end() || it->first != win->name_index)
+    {
+      //If this happens, we have bigger problems, escalate
+      throw std::runtime_error("Window " + std::to_string(win->name_index)
+          + " was not found in its workspace's (" + std::to_string(workspace->ws_number)
+          + ") index map");
+    }
+    it++;
+  }
+  //assert it->second->id == win->id
+  workspace->window_indices.erase(it);
 
   win->title = new_title;
   win->name_index = m_name_finder.getNameIndex(win->wm_class, win->title);
 
-  auto it = workspace->window_indices.emplace(win->name_index, win);
+  it = workspace->window_indices.emplace(win->name_index, win);
   if (it == workspace->window_indices.cbegin())
   {
     std::string new_ws_name = m_name_finder.getName((win)->name_index);
@@ -265,12 +278,24 @@ unsigned WorkspaceManager::removeWindow(uint64_t id)
     //If this happens, we have bigger problems, escalate
     throw e;
   }
-  auto it = workspace->window_indices.find(win->name_index);
-  if (it == workspace->window_indices.cbegin())
+  auto it = workspace->window_indices.lower_bound(win->name_index);
+  while (it == workspace->window_indices.end() || it->second->id != win->id)
+  {
+    if (it == workspace->window_indices.end() || it->first != win->name_index)
+    {
+      //If this happens, we have bigger problems, escalate
+      throw std::runtime_error("Window " + std::to_string(win->name_index)
+          + " was not found in its workspace's (" + std::to_string(workspace->ws_number)
+          + ") index map");
+    }
+    it++;
+  }
+  //assert it->second->id == win->id
+  if (it == workspace->window_indices.begin())
   {
     auto next = it;
     next++;
-    if (next == workspace->window_indices.cend())
+    if (next == workspace->window_indices.end())
     {
       //Removing last window
       updateWorkspaceName("", workspace->ws_number);
