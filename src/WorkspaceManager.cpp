@@ -71,7 +71,22 @@ void WorkspaceManager::updateWorkspaceName(std::string new_name, unsigned ws_num
   {
     std::stringstream cmd_ss;
     cmd_ss << "rename workspace \"" << workspace->current_name << "\" to \"" << ss.str() << "\"";
-    m_i3_conn->send_command(cmd_ss.str());
+    if (!m_i3_conn->send_command(cmd_ss.str()))
+    {
+      //Workspace name is probably out of sync
+      std::cerr << "Workspace name " << workspace->current_name << " is out of sync" << std::endl;
+      auto workspaces = m_i3_conn->get_workspaces();
+      for (const auto& ws : workspaces)
+      {
+        if ((unsigned) ws->num == ws_number)
+        {
+          std::stringstream cmd_ss;
+          cmd_ss << "rename workspace \"" << ws->name << "\" to \"" << ss.str() << "\"";
+          m_i3_conn->send_command(cmd_ss.str());
+          break;
+        }
+      }
+    }
     std::cout << "Set a new name: \"" << ss.str() << "\"" << std::endl;
   }
 }
